@@ -1,65 +1,70 @@
-// Import the Layout component from antd (provides Layout, Content, etc.)
-import { Layout } from 'antd';
-// Import QueryClient and provider from react-query for server state management
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// Import routing primitives from react-router-dom for client-side routing
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-// Import the top navigation bar component
-import Navbar from "./components/Navbar";
-// Import page components used by the route table
-import HomePage from "./pages/HomePage";
+import { Layout, Menu } from 'antd';
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { HomeOutlined, InfoCircleOutlined, DashboardOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
 
-// Destructure Content from the Layout object provided by antd
-const { Content } = Layout;
+const { Header, Content } = Layout;
 
-// Create a single QueryClient instance for the app (react-query)
-const queryClient = new QueryClient();
+// Simple page components
+const HomePage = () => <div style={{ margin: 20 }}><h1>Home Page</h1></div>;
+const AboutPage = () => <div style={{ margin: 20 }}><h1>About Page</h1></div>;
+const DashboardPage = () => <div style={{ margin: 20 }}><h1>Dashboard Page</h1></div>;
 
-// Root App component - sets up providers and routing root
+// Navbar without useLocation hook
+const Navbar = () => {
+  const [currentPath, setCurrentPath] = useState('/');
+  
+  // Update current path when location changes
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, [window.location.pathname]);
+
+  const menuItems = [
+    { 
+      key: '/', 
+      icon: <HomeOutlined />, 
+      label: <NavLink to="/" onClick={() => setCurrentPath('/')}>Home</NavLink> 
+    },
+    { 
+      key: '/about', 
+      icon: <InfoCircleOutlined />, 
+      label: <NavLink to="/about" onClick={() => setCurrentPath('/about')}>About</NavLink> 
+    },
+    { 
+      key: '/dashboard', 
+      icon: <DashboardOutlined />, 
+      label: <NavLink to="/dashboard" onClick={() => setCurrentPath('/dashboard')}>Dashboard</NavLink> 
+    },
+  ];
+
+  return (
+    <Header>
+      <Menu 
+        theme="dark" 
+        mode="horizontal" 
+        selectedKeys={[currentPath]} 
+        items={menuItems} 
+      />
+    </Header>
+  );
+};
+
+// Main App component
 const App = () => {
-  // Simple debug log to show when App renders
-  console.log('App component rendering');
-  
-  // Return the provider and router wrappers for the app
   return (
-    // Provide react-query context to the component tree
-    <QueryClientProvider client={queryClient}>
-      {/* Wrap the app in a BrowserRouter for client-side navigation */}
-      <BrowserRouter>
-        {/* Render the main app content (layout + routes) */}
-        <AppContent />
-      </BrowserRouter>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <Layout style={{ minHeight: '100vh' }}>
+        <Navbar />
+        <Content>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Routes>
+        </Content>
+      </Layout>
+    </BrowserRouter>
   );
 };
 
-// AppContent component - contains layout and route definitions
-const AppContent = () => {
-  // Debug log to show when AppContent renders
-  console.log('AppContent component rendering');
-  
-  return (
-    // Use antd Layout to give the page a consistent structure
-    <Layout style={{ minHeight: '100vh' }}>
-      {/* Render the site's navigation bar */}
-      <Navbar />
-      {/* The main content area supplied by antd's Layout */}
-      <Content>
-        {/* Routes defines the application's route table */}
-        <Routes>
-          {/* Static Routes */}
-          {/* Home route - renders HomePage at root path */}
-          <Route path="/" element={<HomePage />} />
-          {/* About route - renders AboutPage at /about */}
-          <Route path="/about" element={<h1 style={{margin:"20px",fontSize:"28px"}}>About Page</h1>} />
-          
-          <Route path="/dashboard" element={<h1 style={{margin:"20px",fontSize:"28px"}}>Dashboard Page</h1>}/>
-
-        </Routes>
-      </Content>
-    </Layout>
-  );
-};
-
-// Export the App component as the default export from this module
 export default App;

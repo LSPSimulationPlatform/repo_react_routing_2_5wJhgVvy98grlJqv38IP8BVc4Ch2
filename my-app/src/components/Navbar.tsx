@@ -64,7 +64,6 @@ const Navbar = () => {
         />
       </div>
     </Header>
-    
   );
 };
 

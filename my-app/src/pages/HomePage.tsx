@@ -2,23 +2,15 @@
 import { useHomeFeatures } from '../hooks/Home/useHomeFeatures';
 // Import Ant Design UI components used on this page
 import { Card, Row, Col, Typography, Button } from 'antd';
-import React from 'react';
+
 
 // Destructure Title and Paragraph components from Ant Design's Typography
 const { Title, Paragraph } = Typography;
 
-// Define TypeScript interface for feature items
-interface FeatureItem {
-  icon?: React.ReactNode;
-  title: string;
-  description: string;
-  action: () => void;
-}
-
 // HomePage component -- displays an introduction and a grid of feature cards
-const HomePage: React.FC = () => {
+const HomePage = () => {
   // Call the hook to get an array of features to render on the page
-  const features = useHomeFeatures() as FeatureItem[];
+  const features = useHomeFeatures();
 
   // Render the page
   return (
@@ -44,7 +36,7 @@ const HomePage: React.FC = () => {
         {/* Map over features from the hook and create a responsive column for each */}
         {features.map((feature, index) => (
           // Col defines responsive widths: full width on xs, one-third on md
-          <Col xs={24} md={8} key={feature.title || index}>
+          <Col xs={24} md={8} key={index}>
             {/*
               Card displays the feature info:
               - hoverable gives a subtle hover effect
@@ -62,7 +54,7 @@ const HomePage: React.FC = () => {
               ]}
             >
               {/* Optional icon area for the feature */}
-              {feature.icon && <div style={{ marginBottom: '16px' }}>{feature.icon}</div>}
+              <div style={{ marginBottom: '16px' }}>{feature.icon}</div>
               {/* Feature title */}
               <Title level={3}>{feature.title}</Title>
               {/* Short description text for the feature */}
